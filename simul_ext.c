@@ -7,6 +7,19 @@ void PrintPrompt() {
     printf(">> ");
 }
 
+void PrintMenu() {
+    printf("===== Menú =====\n");
+    printf("info      - Mostrar información del superbloque\n");
+    printf("bytemaps  - Mostrar información de los bytemaps\n");
+    printf("dir       - Mostrar contenido del directorio\n");
+    printf("rename    - Renombrar un archivo\n");
+    printf("imprimir  - Imprimir contenido de un archivo\n");
+    printf("remove    - Eliminar un archivo\n");
+    printf("copy      - Copiar un archivo\n");
+    printf("salir     - Salir del programa\n");
+    printf("================\n");
+}
+
 void LeeSuperBloque(EXT_SIMPLE_SUPERBLOCK *psup, FILE *fich) {
     fseek(fich, 0, SEEK_SET);
     fread(psup, sizeof(EXT_SIMPLE_SUPERBLOCK), 1, fich);
@@ -31,9 +44,8 @@ void mostrarBytemaps() {
 }
 
 void mostrarDir() {
-    printf("dir usado\n");
+    printf("Listado del directorio:\n");
 }
-
 void mostrarRename() {
     printf("rename usado\n");
 }
@@ -54,6 +66,13 @@ int main() {
 
     FILE *fich;
     EXT_SIMPLE_SUPERBLOCK ext_superblock;
+    EXT_BYTE_MAPS ext_bytemaps;
+    EXT_BLQ_INODOS ext_blq_inodos;
+    EXT_ENTRADA_DIR directorio[MAX_FICHEROS];
+    EXT_DATOS memdatos[MAX_BLOQUES_DATOS];
+    EXT_DATOS datosfich[MAX_BLOQUES_PARTICION];
+    int entradadir;
+    int grabardatos;
     char comando[20];
 
     fich = fopen("particion.bin", "r+b");
@@ -64,8 +83,9 @@ int main() {
 
 
    
-
+    
     while (1) {
+        PrintMenu();
         PrintPrompt();
         fgets(comando, sizeof(comando), stdin);
         comando[strcspn(comando, "\n")] = '\0';  // Elimina el salto de línea del final
@@ -90,7 +110,7 @@ int main() {
             fclose(fich);
             return 0;
         } else {
-            printf("Comando erroneo\n");
+            printf("Comando erroneo. Comandos utilizables; info, dir, bytemaps, rename, imprimir, remove, salir, copy,\n");
         }
     }
 
