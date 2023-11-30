@@ -20,6 +20,8 @@ void PrintMenu() {
     printf("================\n");
 }
 
+void Directorio(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos);
+
 void LeeSuperBloque(EXT_SIMPLE_SUPERBLOCK *psup, FILE *fich) {
     fseek(fich, 0, SEEK_SET);
     fread(psup, sizeof(EXT_SIMPLE_SUPERBLOCK), 1, fich);
@@ -42,9 +44,30 @@ void ProcessCommand(char *command, EXT_SIMPLE_SUPERBLOCK *ext_superblock, EXT_BY
 void mostrarBytemaps() {
     printf("bytemaps usado\n");
 }
-
-void mostrarDir() {
+void mostrarDir(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos) {
     printf("Listado del directorio:\n");
+    
+    for (int i = 0; i < MAX_FICHEROS; i++) {
+        if (directorio[i].dir_inodo != NULL_INODO) {
+            // Obtener información del inodo correspondiente
+            EXT_SIMPLE_INODE inodo = inodos->blq_inodos[directorio[i].dir_inodo];
+
+            printf("Nombre: %s\n", directorio[i].dir_nfich);
+            printf("Tamaño: %u bytes\n", inodo.size_fichero);
+
+            printf("Bloques que ocupa: ");
+            for (int j = 0; j < MAX_NUMS_BLOQUE_INODO; j++) {
+                if (inodo.i_nbloque[j] != NULL_BLOQUE) {
+                    printf("%u ", inodo.i_nbloque[j]);
+                }
+            }
+            printf("\n");
+
+            printf("Inodo: %u\n", directorio[i].dir_inodo);
+
+            printf("\n");
+        }
+    }
 }
 void mostrarRename() {
     printf("rename usado\n");
@@ -64,6 +87,7 @@ void mostrarCopy() {
 
 int main() {
 
+    
     FILE *fich;
     EXT_SIMPLE_SUPERBLOCK ext_superblock;
     EXT_BYTE_MAPS ext_bytemaps;
@@ -75,6 +99,17 @@ int main() {
     int grabardatos;
     char comando[20];
 
+
+    fich = fopen("particion.bin", "r+b");
+    fread(&datosfich, SIZE_BLOQUE, MAX_BLOQUES_PARTICION, fich);
+    
+    memcpy(&ext_superblock, (EXT_SIMPLE_SUPERBLOCK *)&datosfich[0], SIZE_BLOQUE);
+    memcpy(&directorio, (EXT_ENTRADA_DIR *)&datosfich[3], SIZE_BLOQUE);
+    memcpy(&ext_bytemaps, (EXT_BYTE_MAPS *)&datosfich[1], SIZE_BLOQUE);
+    memcpy(&ext_blq_inodos, (EXT_BLQ_INODOS *)&datosfich[2], SIZE_BLOQUE);
+    memcpy(&memdatos, (EXT_DATOS *)&datosfich[4], MAX_BLOQUES_DATOS * SIZE_BLOQUE);
+    
+
     fich = fopen("particion.bin", "r+b");
     if (fich == NULL) {
         printf("Error al abrir el archivo particion.bin\n");
@@ -83,9 +118,8 @@ int main() {
 
 
    
-    
+    PrintMenu();
     while (1) {
-        PrintMenu();
         PrintPrompt();
         fgets(comando, sizeof(comando), stdin);
         comando[strcspn(comando, "\n")] = '\0';  // Elimina el salto de línea del final
@@ -97,7 +131,7 @@ int main() {
         } else if (strcmp(comando, "bytemaps") == 0) {
             mostrarBytemaps();
         } else if (strcmp(comando, "dir") == 0) {
-            mostrarDir();
+            mostrarDir(directorio, &ext_blq_inodos);
         } else if (strcmp(comando, "rename") == 0) {
             mostrarRename();
         } else if (strcmp(comando, "imprimir") == 0) {
