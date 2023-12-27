@@ -170,42 +170,42 @@ int ComprobarComando(char *strcomando, char *orden, char *argumento1, char *argu
 		contador++;
 	}
 	
-	if(strcmp(orden,"help")==0 || strcmp(orden,"info")==0 || strcmp(orden,"dir")==0 || strcmp(orden,"bytemaps")==0){
+	if(strcmp(orden,"help")==0 || strcmp(orden,"info")==0 || strcmp(orden,"dir")==0 || strcmp(orden,"bytemaps")==0) {
 		return 0;
 	} else if (strcmp(orden, "rename") == 0) {
 		if ((strlen(argumento1) > 0) && (strlen(argumento2) > 0)) {
 			return 0;
 		} else {
-			printf("ERROR. Comprueba los argumentos del comando [renombrar archivo_anterior nuevo_nombre_archivo]\n");
+			printf("ERROR. La orden debe ser \"rename nombre_archivo nuevo_nombre\".\n");
 			return -1;
 		}
 	} else if(strcmp(orden,"imprimir")==0){
 		if(strlen(argumento1)>0){
 			if(strlen(argumento2)>0){
-				printf("ERROR. Comprueba los argumentos del comando [imprimir nombre_archivo]\n");
+				printf("ERROR. La orden debe ser \"imprimir nombre_archivo\"\n");
 				return -1;
 			}
 			return 0;
 		}else{
-			printf("ERROR. Comprueba los argumentos del comando [imprimir nombre_archivo]\n");
+			printf("ERROR. La orden debe ser \"imprimir nombre_archivo\"\n");
 			return -1;
 		}
 	} else if(strcmp(orden,"remove")==0){
 		if(strlen(argumento1)>0){
 			if(strlen(argumento2)>0){
-				printf("Argumentos incorrectos\nComando correcto \"eliminar archivo.txt\"\n");
+				printf("ERROR. La orden debe ser \"remove nombre_archivo\"\n");
 				return -1;
 			}
 			return 0;
 		}else{
-			printf("Argumentos incorrectos\nComando correcto \"eliminar archivo.txt\"\n");
+				printf("ERROR. La orden debe ser \"remove nombre_archivo\"\n");
 			return -1;
 		}
 	} else if(strcmp(orden,"copy")==0){
 		if(strlen(argumento1)>0 && strlen(argumento2)>0){
 			return 0;
 		} else {
-			printf("ERROR. Comprueba los argumentos del comando [copiar fichero_origen fichero_destino]\n");
+			printf("ERROR. La orden debe ser \"copy nombre_archivo nuevo_nombre_archivo\"\n");
 			return -1;
 		}
 	} else if(strcmp(orden,"salir")==0){
